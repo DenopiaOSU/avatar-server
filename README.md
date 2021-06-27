@@ -19,7 +19,7 @@ Cool, light, performant, easy avatar server for osu servers. It is meant to hand
 The avatar server is **EXTREMELY** simple to set up.
 - Download the GitHub repository on your server. This can be done by running the command `git clone https://github.com/RealistikOsu/avatar-server`.
 - Download all of the required modules. This is done by running `python3.9 -m pip install -r requirements.txt` in the downloaded server files folder.
-- Copy the `config.sample.py` file and rename it to `config.py`.
+- Copy the `config.sample.py` file and rename it to `config.py`. (or if you lazy just run main.py, it will do it for you :p)
 - Open it and modify all the values according to your preferences (you might not even need to do it as the defaults are good).
 - Get an avatar you want as your server's default and place it to your selected avatar location (usually just the `avatars` folder) and name it `-1.png`. **The server will not start without this step, therefore it is imperative**.
 - Run the server using `python3.9 main.py`!
