@@ -1,6 +1,15 @@
-from lenhttp import Application, Request, logger, Endpoint
-from config import PORT, AVATARS_FOLDER
 import os
+from lenhttp import Application, Request, logger, Endpoint
+try:
+	from config import PORT, AVATARS_FOLDER
+except ModuleNotFoundError:
+	import shutil
+	shutil.move("config.sample.py", "config.py")
+	logger.warning(
+		"You haven't change a config file name, we did it for you "
+		"please fill it with your preferences and run main.py again!"
+	)
+	raise SystemExit
 
 DEFAULT_AV = AVATARS_FOLDER + "-1.png"
 CACHED_DEFAULT = b""
@@ -16,9 +25,9 @@ if not os.path.exists(DEFAULT_AV):
 # Pre cache default avatar.
 with open(DEFAULT_AV, "rb") as f: CACHED_DEFAULT = f.read()
 
-using_gif = False
 async def serve_avatar(req: Request, u_id: str) -> bytes:
     """Handles all avatar requests to a.ppy.sh and serves the avatar."""
+    using_gif = False
 
     # Check if we serve default avatar or user av.
     if numeric := u_id.isnumeric() and os.path.exists(
@@ -45,4 +54,13 @@ async def serve_avatar(req: Request, u_id: str) -> bytes:
 
 # Create the web server and assign all the routes.
 app = Application(PORT, (Endpoint("/<id>", serve_avatar),))
+
+# Add a middleware.
+@app.add_middleware(404)
+async def not_found(req: Request) -> bytes:
+	"""Returns a default avatar."""
+
+	req.add_header("Content-Type", "image/png")
+	return CACHED_DEFAULT
+
 app.start()
